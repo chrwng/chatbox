@@ -47,61 +47,61 @@ public class ChatsController {
    * @param receiverSession the session of the receiver
    * @throws JSONException
    */
-  public static void sendChatMessage(JSONObject content, @Nullable Session senderSession,
-                                     @Nullable Session receiverSession) throws JSONException {
-        String sender = content.getString("sender");
-        String receiver = content.getString("receiver");
-        String msg = content.getString("message");
+  public static void sendChatMessage(JSONObject content,
+      @Nullable Session senderSession, @Nullable Session receiverSession) throws JSONException {
+    String sender = content.getString("sender");
+    String receiver = content.getString("receiver");
+    String msg = content.getString("message");
 
-        model.Chat chat = new model.Chat(
-            User.fromString(sender), User.fromString(receiver), msg, DateTime.now());
+    Chat chat = new Chat(
+        User.fromString(sender), User.fromString(receiver), msg, DateTime.now());
 
-        // Persist the chat to db.
-        Dao.saveChat(chat);
+    // Persist the chat to db.
+    Dao.saveChat(chat);
 
-        // Only send to sender if the web session is open.
-        if (senderSession != null) {
-            sendChatToUser(senderSession, chat);
-        }
+    // Only send to sender if the web session is open.
+    if (senderSession != null) {
+        sendChatToUser(senderSession, chat);
+    }
 
-        // Only send to receiver if the web session is open.
-        if (receiverSession != null) {
-            sendChatToUser(receiverSession, chat);
-        }
+    // Only send to receiver if the web session is open.
+    if (receiverSession != null) {
+        sendChatToUser(receiverSession, chat);
+    }
   }
 
-  private static void sendChatToUser(Session user, model.Chat chat) {
-      try {
-          user.getRemote().sendString(String.valueOf(new JSONObject()
-              .put("userMessage", createHtmlMessageFromChat(chat))
-              .put("sender", chat.getSender().getName())
-          ));
-      } catch (Exception e) {
-          e.printStackTrace();
-      }
+  private static void sendChatToUser(Session user, Chat chat) {
+    try {
+        user.getRemote().sendString(String.valueOf(new JSONObject()
+            .put("userMessage", createHtmlMessageFromChat(chat))
+            .put("sender", chat.getSender().getName())
+        ));
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
   }
 
   private static void sendChatHistoryToUser(Session user, String sender, String receiver) {
-        List<Chat> history = Dao.getChats(sender, receiver);
-        List<String> chatHistory = history.stream().map(h -> createHtmlMessageFromChat(h)).collect(
-            Collectors.toList());
-        try {
-            JSONObject obj = new JSONObject();
-            JSONArray arr = new JSONArray(chatHistory);
-            obj.put("history", arr);
-            user.getRemote().sendString(String.valueOf(obj));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    List<Chat> history = Dao.getChats(sender, receiver);
+    List<String> chatHistory = history.stream().map(h -> createHtmlMessageFromChat(h)).collect(
+        Collectors.toList());
+    try {
+      JSONObject obj = new JSONObject();
+      JSONArray arr = new JSONArray(chatHistory);
+      obj.put("history", arr);
+      user.getRemote().sendString(String.valueOf(obj));
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+  }
 
   //Builds a HTML element with a sender-name, a message, and a timestamp,
   private static String createHtmlMessageFromChat(Chat chat) {
-      return article().with(
-          b(chat.getSender().getName() + " says:"),
-          p(chat.getMessage()),
-          span().withClass("timestamp").withText(
-              new SimpleDateFormat("HH:mm:ss").format(chat.getTimestamp().toDate()))
-      ).render();
+    return article().with(
+        b(chat.getSender().getName() + " says:"),
+        p(chat.getMessage()),
+        span().withClass("timestamp").withText(
+            new SimpleDateFormat("HH:mm:ss").format(chat.getTimestamp().toDate()))
+    ).render();
   }
 }

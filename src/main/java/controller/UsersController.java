@@ -29,14 +29,14 @@ public class UsersController {
   }
 
   private static void broadcastUserJoin(Set<Session> users) {
-      users.stream().filter(Session::isOpen).forEach(session -> {
-        try {
-          session.getRemote().sendString(String.valueOf(
-              new JSONObject().put("userlist", Dao.getUsers())
-          ));
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      });
+    users.stream().filter(Session::isOpen).forEach(session -> {
+      try {
+        session.getRemote().sendString(String.valueOf(
+            new JSONObject().put("userlist", Dao.getUsers())
+        ));
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    });
   }
 }

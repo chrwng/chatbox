@@ -23,29 +23,29 @@ import static spark.Spark.webSocket;
  */
 public class ChatBox {
 
-    public static void main(String[] args) {
-        staticFiles.location("/public"); //index.html is served at localhost:4567 (default port)
-        staticFiles.expireTime(600);
-        webSocket("/chat", WebSocketsController.class);
-        post("/username", (req, res) -> {
-            String username = req.queryParams("value");
-            res.redirect("/chats/" + username);
-            return null;
-        });
-        get("/chats/:username", (req, res) -> {
-            return html().with(
-                head().with(title("Chat Box"), link().withRel("stylesheet").withHref("/style.css")),
-                body().with(
-                    div().with(
-                        input().withId("message").withPlaceholder("Type your message.."),
-                        button("Send").withId("send")
-                    ),
-                    article()
-                        .with(p("Select a user in the right panel to chat with.")
-                        .withId("chatTitle"),
-                    ul().withId("userlist"), ul().withId("chats")),
-                    script().attr("src", "/chats.js"))).render();
-        });
-        init();
-    }
+  public static void main(String[] args) {
+    staticFiles.location("/public"); //index.html is served at localhost:4567 (default port)
+    staticFiles.expireTime(600);
+    webSocket("/chat", WebSocketsController.class);
+    post("/username", (req, res) -> {
+        String username = req.queryParams("value");
+        res.redirect("/chats/" + username);
+        return null;
+    });
+    get("/chats/:username", (req, res) -> {
+        return html().with(
+            head().with(title("Chat Box"), link().withRel("stylesheet").withHref("/style.css")),
+            body().with(
+                div().with(
+                    input().withId("message").withPlaceholder("Type your message.."),
+                    button("Send").withId("send")
+                ),
+                article()
+                    .with(p("Select a user in the right panel to chat with.")
+                    .withId("chatTitle"),
+                ul().withId("userlist"), ul().withId("chats")),
+                script().attr("src", "/chats.js"))).render();
+    });
+    init();
+  }
 }
