@@ -29,11 +29,6 @@ function registerOnClickForTarget() {
     var targetUserList = document.getElementsByClassName("targetUser");
     for (i = 0; i < targetUserList.length; i++) {
         targetUserList[i].onclick = function(e) {
-            //console.log(e.target.textContent + " clicked");
-            //if (e.target.textContent === getCurrentUser()) {
-            //    alert("Please select someone other than yourself to chat with.");
-            //    return;
-            //}
             targetUser = e.target.textContent;
             id("chatTitle").innerHTML = "Chat records with " + targetUser;
             id("chats").innerHTML = "";

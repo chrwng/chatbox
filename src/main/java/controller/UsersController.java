@@ -1,14 +1,11 @@
 package controller;
 
+import dao.Dao;
 import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import dao.Dao;
 
 /**
  * Controller in charge of processing user creation and broadcast to other users.
